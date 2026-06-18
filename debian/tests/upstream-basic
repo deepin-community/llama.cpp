@@ -1,0 +1,36 @@
+#!/bin/sh
+
+testsdir="/usr/libexec/$(dpkg-architecture -qDEB_HOST_MULTIARCH)/llama.cpp-tests/"
+
+# Some of these tests need additional arguments and/or data that we still
+# need to figure out, or require network access (test-arg-parser), or require
+# models/templates/*.jinja files excluded for DFSG compliance (test-chat-auto-parser)
+# test-llama-archs is excluded upstream (.github/workflows/build.yml:97,669)
+# with "TODO: fix and re-enable" - it fails to load backends
+# see https://github.com/ggml-org/llama.cpp/blob/9281dd135d6f175ceacca7d3a3ec440012264cfe/.github/workflows/build.yml#L663
+skip_tests="\
+test-autorelease
+test-chat
+test-chat-auto-parser
+test-gbnf-validator
+test-model-load-cancel
+test-quant-type-selection
+test-recurrent-state-rollback
+test-save-load-state
+test-state-restore-fragmented
+test-thread-safety
+test-tokenizer-0
+test-tokenizer-1-bpe
+test-tokenizer-1-spm"
+
+# Any individual failure is overall failure
+exitcode=0
+for testname in "$testsdir"/test*; do
+    if echo "$skip_tests" | grep -qx "$(basename "$testname")"; then
+        echo "Skipping $testname"
+        continue
+    fi
+
+    $testname || exitcode=1
+done
+exit $exitcode

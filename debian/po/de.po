@@ -1,0 +1,117 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the llama.cpp package.
+# Helge Kreutzmann <debian@helgefjell.de>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: llama.cpp 9413+dfsg-1\n"
+"Report-Msgid-Bugs-To: llama.cpp@packages.debian.org\n"
+"POT-Creation-Date: 2026-05-26 16:50+0200\n"
+"PO-Revision-Date: 2026-06-07 11:10+0200\n"
+"Last-Translator: Helge Kreutzmann <debian@helgefjell.de>\n"
+"Language-Team: German <debian-l10n-german@lists.debian.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "\"SimpleChat\" UI"
+msgstr "»SimpleChat«-Benutzeroberfläche"
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "Download UI from upstream"
+msgstr "Benutzeroberfläche von den Originalautoren herunterladen"
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "None"
+msgstr "Keine"
+
+#. Type: select
+#. Choices
+#. Type: string
+#. Description
+#: ../llama.cpp-tools.templates:1001 ../llama.cpp-tools.templates:2001
+msgid "Custom path"
+msgstr "Angepsster Pfad"
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid "Which default UI would you like to use with llama-server?"
+msgstr ""
+"Welche Benutzeroberfläche wollen Sie standardmäßig mit dem Llama-Server "
+"verwenden?"
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"This option sets the default UI for the llama-server to use. You can always "
+"override this at runtime by passing the --path option to llama-server."
+msgstr ""
+"Diese Option setzt die Vorgabeoberfläche für die Verwendung mit dem Llama-"
+"Server. Sie können dies immer zur Laufzeit außer Kraft setzen, indem Sie die "
+"Option »--path« an Llama-Server übergeben."
+
+# FIXME . The → The
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"This package comes with the minimal \"SimpleChat\" UI, which is no longer "
+"being actively developed. . The package maintainers suggest that instead, "
+"you choose to download the UI from upstream, which Debian cannot ship (yet) "
+"because of missing dependencies. If you choose to download the UI, you will "
+"need an active internet connection that can reach the huggingface.co servers."
+msgstr ""
+"Dieses Paket kommt mit der minimalen Benutzeroberfläche »SimpleChat«, die "
+"aber nicht mehr aktiv entwickelt wird. Die Paketbetreuer empfehlen, dass Sie "
+"stattdessen das Herunterladen einer Oberfläche von den Originalautoren "
+"auswählen, die Debian aufgrund fehlender Abhängigkeiten (noch) nicht "
+"ausliefern kann. Falls Sie das Herunterladen der Benutzeroberfläche "
+"auswählen, benötigen Sie eine aktive Internetverbindung, mit der Sie die "
+"»huggingface.co«-Server erreichen können."
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"If you elect to supply a custom path to an UI, you will be asked to enter it "
+"on the next screen."
+msgstr ""
+"Falls Sie die Auswahl eines angepassten Pfades zu der Benutzeroberfläche "
+"auswählen, werden Sie auf der nächsten Maske aufgefordert, diesen einzugeben."
+
+#. Type: string
+#. Description
+#: ../llama.cpp-tools.templates:2001
+msgid "Enter a custom path to an UI:"
+msgstr "Geben Sie einen angepassten Pfad zu einer Benutzeroberfläche ein:"
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "Invalid directory"
+msgstr "Ungültiges Verzeichnis"
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "The path you entered does not exist, or does not point to a directory."
+msgstr ""
+"Der Pfad, den Sie eingegeben haben, existiert nicht oder zeigt nicht auf ein "
+"Verzeichnis."
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "Please return to the previous screen and fix this."
+msgstr "Bitte kehren Sie zur vorherigen Maske zurück und korrigieren Sie dies."

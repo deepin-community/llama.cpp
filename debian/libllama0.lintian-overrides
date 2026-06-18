@@ -1,0 +1,2 @@
+# libllama is not yet stable, so it is installed to a private directory
+libllama0: custom-library-search-path RUNPATH /usr/lib/*/llama [usr/lib/*/llama/*]

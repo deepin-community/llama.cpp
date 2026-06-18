@@ -1,0 +1,3 @@
+usr/bin/llama-gen-docs
+# Needs a model
+usr/bin/export-graph-ops

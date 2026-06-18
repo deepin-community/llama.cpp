@@ -1,0 +1,111 @@
+# Translation of llama.cpp debconf messages to European Portuguese
+# Copyright (C) 2026 THE llama.cpp'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the llama.cpp package.
+#
+# SPDX-FileCopyrightText: 2026 Américo Monteiro <a_monteiro@gmx.com>
+msgid ""
+msgstr ""
+"Project-Id-Version: llama.cpp 9190+dfsg-1\n"
+"Report-Msgid-Bugs-To: llama.cpp@packages.debian.org\n"
+"POT-Creation-Date: 2026-05-26 16:50+0200\n"
+"PO-Revision-Date: 2026-05-31 00:47+0100\n"
+"Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
+"Language-Team: Portuguese <>\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 25.04.0\n"
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "\"SimpleChat\" UI"
+msgstr "UI \"SimpleChat\""
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "Download UI from upstream"
+msgstr "Descarregar a UI a partir do autor"
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "None"
+msgstr "Nenhum"
+
+#. Type: select
+#. Choices
+#. Type: string
+#. Description
+#: ../llama.cpp-tools.templates:1001 ../llama.cpp-tools.templates:2001
+msgid "Custom path"
+msgstr "Caminho personalizado"
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid "Which default UI would you like to use with llama-server?"
+msgstr "Qual a UI predefinida deseja usar com o llama-server?"
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"This option sets the default UI for the llama-server to use. You can always "
+"override this at runtime by passing the --path option to llama-server."
+msgstr ""
+"Esta opção define a UI predefinida para o llama-server usar. Pode sempre "
+"sobrepor isto em tempo de execução passando a opção --path ao llama-server."
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"This package comes with the minimal \"SimpleChat\" UI, which is no longer "
+"being actively developed. . The package maintainers suggest that instead, "
+"you choose to download the UI from upstream, which Debian cannot ship (yet) "
+"because of missing dependencies. If you choose to download the UI, you will "
+"need an active internet connection that can reach the huggingface.co servers."
+msgstr ""
+"Este pacote vem com a UI \"SimpleChat\" minima, a qual não é mais ativamente "
+"desenvolvida. Os maintainers do pacote sugerem que em vez desta, escolha "
+"descarregar a UI do autor, a qual Debian não pode empacotar (ainda) devido "
+"a dependências em falta. Se escolher descarregar a UI, vai precisar duma "
+"ligação à internet ativa que possa alcançar os servidores huggingface.co."
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"If you elect to supply a custom path to an UI, you will be asked to enter it "
+"on the next screen."
+msgstr ""
+"Se optar por fornecer um caminho personalizado para uma UI, vai-lhe ser "
+"pedido para o indicar no próximo ecrã."
+
+#. Type: string
+#. Description
+#: ../llama.cpp-tools.templates:2001
+msgid "Enter a custom path to an UI:"
+msgstr "Insira um caminho personalizado para uma UI:"
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "Invalid directory"
+msgstr "Diretório inválido"
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "The path you entered does not exist, or does not point to a directory."
+msgstr "O caminho que indicou não existe, ou não aponta para um diretório."
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "Please return to the previous screen and fix this."
+msgstr "Por favor retorne ao ecrã anterior para corrigir isto."

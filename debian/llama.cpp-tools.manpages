@@ -1,0 +1,4 @@
+man/man1/llama-bench.1
+man/man1/llama-cli.1
+man/man1/llama-quantize.1
+man/man1/llama-server.1

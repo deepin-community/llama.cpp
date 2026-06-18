@@ -1,0 +1,32 @@
+Template: llama.cpp-tools/default-ui
+Type: select
+Choices-C: simplechat, download, none, custom
+__Choices: "SimpleChat" UI, Download UI from upstream, None, Custom path
+Default: simplechat
+_Description: Which default UI would you like to use with llama-server?
+ This option sets the default UI for the llama-server to use. You can
+ always override this at runtime by passing the --path option to
+ llama-server.
+ .
+ This package comes with the minimal "SimpleChat" UI, which is no longer
+ being actively developed. . The package maintainers suggest that instead,
+ you choose to download the UI from upstream, which Debian cannot ship
+ (yet) because of missing dependencies. If you choose to download the UI,
+ you will need an active internet connection that can reach the
+ huggingface.co servers.
+ .
+ If you elect to supply a custom path to an UI, you will be asked to enter
+ it on the next screen.
+
+Template: llama.cpp-tools/default-ui-custom-path
+Type: string
+Default: 
+_Description: Custom path
+ Enter a custom path to an UI:
+
+Template: llama.cpp-tools/path-error
+Type: error
+_Description: Invalid directory
+ The path you entered does not exist, or does not point to a directory.
+ .
+ Please return to the previous screen and fix this.

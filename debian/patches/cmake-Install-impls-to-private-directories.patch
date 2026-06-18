@@ -1,0 +1,125 @@
+From: Christian Kastner <ckk@debian.org>
+Date: Sun, 31 May 2026 10:14:26 +0200
+Subject: cmake: Install impls to private directories
+
+Upstream has factored out utility functionality into shared objects so
+that it can be used from multiple frontends. Nothing outside of
+upstream's utilities should use this (for now), so make these -impl.so
+objects private.
+
+Forwarded: not-needed
+---
+ tools/batched-bench/CMakeLists.txt | 2 +-
+ tools/cli/CMakeLists.txt           | 2 +-
+ tools/completion/CMakeLists.txt    | 2 +-
+ tools/fit-params/CMakeLists.txt    | 2 +-
+ tools/llama-bench/CMakeLists.txt   | 2 +-
+ tools/perplexity/CMakeLists.txt    | 2 +-
+ tools/quantize/CMakeLists.txt      | 2 +-
+ tools/server/CMakeLists.txt        | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/tools/batched-bench/CMakeLists.txt b/tools/batched-bench/CMakeLists.txt
+index f6ed257..65df609 100644
+--- a/tools/batched-bench/CMakeLists.txt
++++ b/tools/batched-bench/CMakeLists.txt
+@@ -9,7 +9,7 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+ target_link_libraries(${TARGET} PUBLIC llama-common llama ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if(LLAMA_TOOLS_INSTALL)
+-    install(TARGETS ${TARGET} LIBRARY)
++    install(TARGETS ${TARGET} LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR})
+ endif()
+ 
+ # llama-batched-bench executable
+diff --git a/tools/cli/CMakeLists.txt b/tools/cli/CMakeLists.txt
+index a3e6357..5290298 100644
+--- a/tools/cli/CMakeLists.txt
++++ b/tools/cli/CMakeLists.txt
+@@ -9,7 +9,7 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ../serve
+ target_link_libraries(${TARGET} PUBLIC server-context llama-common ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if(LLAMA_TOOLS_INSTALL)
+-    install(TARGETS ${TARGET} LIBRARY)
++    install(TARGETS ${TARGET} LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR})
+ endif()
+ 
+ # llama-cli executable
+diff --git a/tools/completion/CMakeLists.txt b/tools/completion/CMakeLists.txt
+index a310251..3217f99 100644
+--- a/tools/completion/CMakeLists.txt
++++ b/tools/completion/CMakeLists.txt
+@@ -9,7 +9,7 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+ target_link_libraries(${TARGET} PUBLIC llama-common llama ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if(LLAMA_TOOLS_INSTALL)
+-    install(TARGETS ${TARGET} LIBRARY)
++    install(TARGETS ${TARGET} LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR})
+ endif()
+ 
+ # llama-completion executable
+diff --git a/tools/fit-params/CMakeLists.txt b/tools/fit-params/CMakeLists.txt
+index 8acdaef..32a2937 100644
+--- a/tools/fit-params/CMakeLists.txt
++++ b/tools/fit-params/CMakeLists.txt
+@@ -9,7 +9,7 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+ target_link_libraries(${TARGET} PUBLIC llama-common llama ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if(LLAMA_TOOLS_INSTALL)
+-    install(TARGETS ${TARGET} LIBRARY)
++    install(TARGETS ${TARGET} LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR})
+ endif()
+ 
+ # llama-fit-params executable
+diff --git a/tools/llama-bench/CMakeLists.txt b/tools/llama-bench/CMakeLists.txt
+index b1c35ee..8ff8001 100644
+--- a/tools/llama-bench/CMakeLists.txt
++++ b/tools/llama-bench/CMakeLists.txt
+@@ -9,7 +9,7 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+ target_link_libraries(${TARGET} PUBLIC llama-common llama ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if(LLAMA_TOOLS_INSTALL)
+-    install(TARGETS ${TARGET} LIBRARY)
++    install(TARGETS ${TARGET} LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR})
+ endif()
+ 
+ # llama-bench executable
+diff --git a/tools/perplexity/CMakeLists.txt b/tools/perplexity/CMakeLists.txt
+index 0eee9ac..cd13b6d 100644
+--- a/tools/perplexity/CMakeLists.txt
++++ b/tools/perplexity/CMakeLists.txt
+@@ -9,7 +9,7 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+ target_link_libraries(${TARGET} PUBLIC llama-common llama ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if(LLAMA_TOOLS_INSTALL)
+-    install(TARGETS ${TARGET} LIBRARY)
++    install(TARGETS ${TARGET} LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR})
+ endif()
+ 
+ # llama-perplexity executable
+diff --git a/tools/quantize/CMakeLists.txt b/tools/quantize/CMakeLists.txt
+index eead4c8..7499ee4 100644
+--- a/tools/quantize/CMakeLists.txt
++++ b/tools/quantize/CMakeLists.txt
+@@ -9,7 +9,7 @@ target_include_directories(${TARGET} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+ target_link_libraries(${TARGET} PUBLIC llama-common llama ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if(LLAMA_TOOLS_INSTALL)
+-    install(TARGETS ${TARGET} LIBRARY)
++    install(TARGETS ${TARGET} LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR})
+ endif()
+ 
+ # llama-quantize executable
+diff --git a/tools/server/CMakeLists.txt b/tools/server/CMakeLists.txt
+index 7d42743..675146d 100644
+--- a/tools/server/CMakeLists.txt
++++ b/tools/server/CMakeLists.txt
+@@ -45,7 +45,7 @@ target_include_directories(${TARGET} PRIVATE ../mtmd ${CMAKE_SOURCE_DIR})
+ target_link_libraries(${TARGET} PUBLIC server-context llama-ui cpp-httplib ${CMAKE_THREAD_LIBS_INIT})
+ 
+ if(LLAMA_TOOLS_INSTALL)
+-    install(TARGETS ${TARGET} LIBRARY)
++    install(TARGETS ${TARGET} LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR})
+ endif()
+ 
+ # llama-server executable

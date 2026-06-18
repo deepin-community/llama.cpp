@@ -1,0 +1,103 @@
+#!/bin/sh
+set -e
+
+. /usr/share/debconf/confmodule
+
+update_default_ui_link() {
+    new_path="$1"
+    target="/usr/share/llama.cpp/llama-server/default-ui"
+
+    if [ -z "$new_path" ]; then
+        rm -f "$target"
+        return
+    elif ! [ -e "$target" ]; then
+        ln -s "$new_path" "$target"
+        return
+    fi
+
+    current_path="$(readlink -f "$target")"
+    if [ "$current_path" != "$new_path" ]; then
+        rm -f "$target"
+        ln -s "$new_path" "$target"
+    fi
+}
+
+download_ui_from_huggingface() {
+    dver="$(dpkg-query -f '${Version}' -W llama.cpp-tools)"
+    build="${dver%%[!0-9]*}"
+    out_dir="/var/lib/llama.cpp/llama-server/ui/$build"
+
+    if [ -d "$out_dir" ]; then
+        echo "UI has already been downloaded, not downloading again"
+        return
+    fi
+
+    old_umask="$(umask)"
+    umask 022
+    mkdir -p "$out_dir-temp"
+
+    base_url="https://huggingface.co/buckets/ggml-org/llama-ui/resolve"
+    files="checksums.txt bundle.css bundle.js index.html loading.html"
+    failed=0
+    for iterfile in $files; do
+        file_url="$base_url/b$build/$iterfile?download=true"
+        if [ -e /usr/bin/wget ]; then
+            wget -q -O "$out_dir-temp/$iterfile" "$file_url" || failed=1
+        else
+            curl -s -o "$out_dir-temp/$iterfile" "$file_url" || failed=1
+        fi
+        if [ "$failed" -eq 1 ]; then
+            echo "Failed to download $file_url" >&2
+            rm -rf "$out_dir-temp"
+            exit 1
+        fi
+    done
+
+    if (cd "$out_dir-temp" && ! sha256sum --quiet -c checksums.txt); then
+        echo "Checksum mismatch on downloaded UI files." >&2
+        rm -rf "$out_dir-temp"
+        exit 1
+    fi
+
+    mv "$out_dir-temp" "$out_dir"
+    umask "$old_umask"
+    echo "UI for llama.cpp b$build downloaded successfully."
+
+    echo "Configuring llama-server to use the upstream UI by default."
+    update_default_ui_link "$out_dir"
+}
+
+if [ "$1" = "configure" ]; then
+    # Before using debconf, we were using alternatives to manage the symlink
+    if update-alternatives --query llama-server-theme >/dev/null 2>&1; then
+        update-alternatives --remove-all llama-server-theme
+        rm -f /usr/share/llama.cpp-tools/llama-server/active-theme
+    fi
+
+    rm -f "$default_ui_path"
+
+    db_get llama.cpp-tools/default-ui
+    UICHOICE="$RET"
+
+    if [ "$UICHOICE" = "download" ]; then
+        echo "Downloading the upstream UI"
+        download_ui_from_huggingface
+    elif [ "$UICHOICE" = "simplechat" ]; then
+        echo "Configuring llama-server to use the SimpleChat UI by default."
+        update_default_ui_link /usr/share/llama.cpp/llama-server/simplechat-legacy-ui
+    elif [ "$UICHOICE" = "none" ]; then
+        echo "Not configuring a UI for llama-server."
+        update_default_ui_link ""
+    elif [ "$UICHOICE" = "custom" ]; then
+        db_get llama.cpp-tools/default-ui-custom-path
+        echo "Configuring llama-server to use the UI at $RET"
+        # what if empty
+        update_default_ui_link "$RET"
+    fi
+
+    db_stop
+fi
+
+#DEBHELPER#
+
+exit 0

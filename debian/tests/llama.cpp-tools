@@ -1,0 +1,47 @@
+#!/bin/sh
+set -u
+
+# We need a special testbed that tells us where to find models we can use
+if [ -z "${MODELS_DIR:-}" ]; then
+    echo "Environment variable MODELS_DIR not set, skipping tests."
+    exit 77
+elif ! [ -d "$MODELS_DIR" ]; then
+    echo "Not a directory: $MODELS_DIR" >&2
+    exit 1
+fi
+
+if [ -z "${MODEL_NAMES:-}" ]; then
+    MODEL_NAMES="$(grep -Ev '^(#.*|[[:space:]]*)$' debian/tests/supported-models.non-free)"
+fi
+
+at_least_one=0
+exitcode=
+for model_name in $MODEL_NAMES; do
+    model_fullpath="$MODELS_DIR/$model_name"
+    if ! [ -f "$model_fullpath" ]; then
+        echo "Model $model_fullpath not found, skipping"
+        continue
+    fi
+    at_least_one=1
+
+    echo "Running tests using model: $model_fullpath"
+
+    # We're telling llama-bench to output JSON to stderr. On success, move the
+    # JSON result to the artifacts; on failure, re-output stderr
+    tmp_output="$AUTOPKGTEST_TMP/tmp_output"
+    if llama-bench -m "$model_fullpath" -oe json 2>"$tmp_output"; then
+        artifact_fullpath="$AUTOPKGTEST_ARTIFACTS/llama-bench/$(basename "$model_name").json"
+        mkdir -p "$(dirname "$artifact_fullpath")"
+        mv "$tmp_output" "$artifact_fullpath"
+    else
+        cat "$tmp_output" >&2
+        rm -f "$tmp_output"
+        exitcode=1
+    fi
+
+    echo "Finished running tests using model: $model_fullpath"
+done
+
+# If not a single test could be run, treat this as an overall skip
+[ "$at_least_one" -gt 0 ] || exit 77
+exit $exitcode

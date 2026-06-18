@@ -1,0 +1,2 @@
+d /var/lib/llama-server 0755 _llama-server _llama-server
+d /var/cache/llama-server 0755 _llama-server _llama-server

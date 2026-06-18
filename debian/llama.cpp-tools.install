@@ -1,0 +1,20 @@
+usr/bin/llama-bench
+usr/bin/llama-cli
+usr/bin/llama-completion
+usr/bin/llama-quantize
+usr/bin/llama-server
+
+usr/lib/*/llama/libllama-bench-impl.so
+usr/lib/*/llama/libllama-cli-impl.so
+usr/lib/*/llama/libllama-completion-impl.so
+usr/lib/*/llama/libllama-quantize-impl.so
+usr/lib/*/llama/libllama-server-impl.so
+
+# This needs a ton of dependencies through python3-torch. Until we figure out
+# how to best deal with it, just ship it in docs
+convert_hf_to_gguf.py		        usr/share/doc/llama.cpp-tools/scripts/
+
+# These is a copy of the legacy theme that upstream used to ship until it
+# was removed in b8701. We re-add it so that we can ship a DFSG-free
+# version. Upstream's main UI cannot yet be built from source in Debian.
+debian/simplechat-legacy-ui         usr/share/llama.cpp/llama-server/

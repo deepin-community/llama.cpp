@@ -1,0 +1,158 @@
+From: Christian Kastner <ckk@debian.org>
+Date: Tue, 26 May 2026 10:49:53 +0200
+Subject: Dynamically load WebUI, if available
+
+Forwarded: not-needed
+---
+ tools/server/server-http.cpp | 88 ++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 69 insertions(+), 19 deletions(-)
+
+diff --git a/tools/server/server-http.cpp b/tools/server/server-http.cpp
+index 34a20c9..a8cc99a 100644
+--- a/tools/server/server-http.cpp
++++ b/tools/server/server-http.cpp
+@@ -5,10 +5,13 @@
+ 
+ #include <cpp-httplib/httplib.h>
+ 
++#include <filesystem>
++#include <fstream>
+ #include <functional>
+ #include <future>
+ #include <memory>
+ #include <string>
++#include <system_error>
+ #include <thread>
+ 
+ //
+@@ -81,6 +84,32 @@ bool server_http_context::init(const common_params & params) {
+     port = params.port;
+     hostname = params.hostname;
+ 
++    // <Debian>
++    //
++    // Instead of relying on upstream's build-time LLAMA_UI_HAS_ASSETS,
++    // determine whether to serve loading.html if and only if the user
++    // configured llama.cpp-tools to download the UI at install time.
++    //
++    // Couple of assumptions here that we could do more error checking
++    // for, but errors can really only occur if someone message with
++    // files belonging to the package -- which they shouldn't.
++    bool has_default_ui = false;
++    bool default_ui_is_upstream = false;
++    static const std::filesystem::path default_ui_path = "/usr/share/llama.cpp/llama-server/default-ui";
++    std:: error_code ec;
++    if (std::filesystem::is_symlink(default_ui_path, ec) && !ec) {
++        has_default_ui = true;
++        std::filesystem::path target = std::filesystem::read_symlink(default_ui_path, ec);
++        if (!ec) {
++            std::string target_s = target.string();
++            std::string prefix = "/var/lib/llama.cpp/llama-server";
++            if (target_s.size() >= prefix.size() && target_s.compare(0, prefix.size(), prefix) == 0) {
++                default_ui_is_upstream = true;
++            }
++        }
++    }
++    // </Debian>
++
+     if (gcp.enabled) {
+         SRV_INF("Google Cloud Platform compat: health route = %s, predict route = %s, port = %d\n", gcp.path_health.c_str(), gcp.path_predict.c_str(), gcp.port);
+ 
+@@ -231,20 +260,25 @@ bool server_http_context::init(const common_params & params) {
+         return false;
+     };
+ 
+-    auto middleware_server_state = [this](const httplib::Request & req, httplib::Response & res) {
++    auto middleware_server_state = [this, default_ui_is_upstream](const httplib::Request & req, httplib::Response & res) {
+         if (!is_ready.load()) {
+-#if defined(LLAMA_UI_HAS_ASSETS)
+-            if (const auto tmp = string_split<std::string>(req.path, '.');
+-                req.path == "/" || (!tmp.empty() && tmp.back() == "html")) {
+-                if (const llama_ui_asset * a = llama_ui_find_asset("loading.html")) {
+-                    res.status = 503;
+-                    res.set_content(reinterpret_cast<const char*>(a->data), a->size, "text/html; charset=utf-8");
+-                    return false;
++            // Debian-specific again)
++            if (default_ui_is_upstream) {
++                if (const auto tmp = string_split<std::string>(req.path, '.');
++                    req.path == "/" || (!tmp.empty() && tmp.back() == "html")) {
++                    std::ifstream loading_f(default_ui_path / "loading.html");
++                    if (loading_f) {
++                        std::ostringstream loading_ss;
++                        loading_ss << loading_f.rdbuf();
++                        res.status = 503;
++                        res.set_content(loading_ss.str(), "text/html; charset=utf-8");
++                        return false;
++                    }
+                 }
++            } else {
++                (void)req;
+             }
+-#else
+-            (void)req;
+-#endif
++
+             // no endpoints are allowed to be accessed when the server is not ready
+             // this is to prevent any data races or inconsistent states
+             res.status = 503;
+@@ -313,28 +347,39 @@ bool server_http_context::init(const common_params & params) {
+                 SRV_ERR("static assets path not found: %s\n", params.public_path.c_str());
+                 return false;
+             }
+-        } else {
+-#if defined(LLAMA_UI_HAS_ASSETS)
++        } else if (default_ui_is_upstream) {
++            // Debian-specific again
+             auto serve_asset = [](const std::string & name, const char * mime, bool with_isolation_headers) {
+                 return [name, mime, with_isolation_headers](const httplib::Request & req, httplib::Response & res) {
+-                    const llama_ui_asset * a = llama_ui_find_asset(name.c_str());
+-                    if (!a) {
++                    std::filesystem::path asset_path = default_ui_path / name;
++                    std::ifstream asset_f(asset_path);
++                    if (!asset_f.is_open()) {
++                        res.status = 404;
++                        return false;
++                    }
++
++                    struct stat st;
++                    if (stat(asset_path.c_str(), &st) != 0) {
+                         res.status = 404;
+                         return false;
+                     }
+-                    res.set_header("ETag", a->etag);
++
++                    auto etag = "\"" + std::to_string(st.st_mtime) + "-" + std::to_string(st.st_size) + "\"";
++                    res.set_header("ETag", etag);
+                     // Check If-None-Match for conditional GET (304 Not Modified)
+                     if (const std::string & inm = req.get_header_value("If-None-Match");
+-                        !inm.empty() && (inm == a->etag || inm == std::string("W/") + a->etag)) {
++                        !inm.empty() && inm == etag) {
+                         res.status = 304;
+                         return false;
+                     }
++
+                     if (with_isolation_headers) {
+                         // COEP and COOP headers, required by pyodide (python interpreter)
+                         res.set_header("Cross-Origin-Embedder-Policy", "require-corp");
+                         res.set_header("Cross-Origin-Opener-Policy", "same-origin");
+                     }
+-                    res.set_content(reinterpret_cast<const char*>(a->data), a->size, mime);
++                    std::string content((std::istreambuf_iterator<char>(asset_f)), std::istreambuf_iterator<char>());
++                    res.set_content(std::move(content), mime);
+                     return false;
+                 };
+             };
+@@ -342,7 +387,12 @@ bool server_http_context::init(const common_params & params) {
+             srv->Get(params.api_prefix + "/",           serve_asset("index.html", "text/html; charset=utf-8",              true));
+             srv->Get(params.api_prefix + "/bundle.js",  serve_asset("bundle.js",  "application/javascript; charset=utf-8", false));
+             srv->Get(params.api_prefix + "/bundle.css", serve_asset("bundle.css", "text/css; charset=utf-8",               false));
+-#endif
++        } else if (has_default_ui) {
++            // Debian-specific again
++            if (const auto is_found = srv->set_mount_point(params.api_prefix + "/", default_ui_path); !is_found) {
++                SRV_ERR("static assets path not found: %s\n", default_ui_path.c_str());
++                return false;
++            }
+         }
+     }
+     return true;

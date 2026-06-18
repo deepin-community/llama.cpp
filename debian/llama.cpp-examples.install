@@ -1,0 +1,24 @@
+usr/bin/llama-batched
+usr/bin/llama-debug
+usr/bin/llama-diffusion-cli
+usr/bin/llama-embedding
+usr/bin/llama-eval-callback
+usr/bin/llama-finetune
+usr/bin/llama-gen-docs
+usr/bin/llama-gguf
+usr/bin/llama-gguf-hash
+usr/bin/llama-idle
+usr/bin/llama-lookahead
+usr/bin/llama-lookup
+usr/bin/llama-lookup-create
+usr/bin/llama-lookup-merge
+usr/bin/llama-lookup-stats
+usr/bin/llama-parallel
+usr/bin/llama-passkey
+usr/bin/llama-retrieval
+usr/bin/llama-simple
+usr/bin/llama-simple-chat
+usr/bin/llama-speculative
+usr/bin/llama-speculative-simple
+# Not available with GGML_BACKEND_DL=ON
+#/usr/bin/llama-convert-llama2c-to-ggml

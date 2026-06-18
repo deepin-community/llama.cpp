@@ -1,0 +1,4 @@
+completions/llama-bench
+completions/llama-cli
+#completions/llama-quantize # does not actually use these options
+completions/llama-server

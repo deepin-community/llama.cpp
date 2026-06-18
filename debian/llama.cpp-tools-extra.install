@@ -1,0 +1,18 @@
+usr/bin/llama-batched-bench
+usr/bin/llama-debug-template-parser
+usr/bin/llama-gguf-split
+usr/bin/llama-imatrix
+usr/bin/llama-fit-params
+usr/bin/llama-mtmd-cli
+usr/bin/llama-perplexity
+usr/bin/llama-results
+usr/bin/llama-template-analysis
+usr/bin/llama-tokenize
+usr/bin/llama-tts
+# Not available with GGML_BACKEND_DL=ON
+#usr/bin/llama-cvector-generator
+#usr/bin/llama-export-lora
+
+usr/lib/*/llama/libllama-batched-bench-impl.so
+usr/lib/*/llama/libllama-fit-params-impl.so
+usr/lib/*/llama/libllama-perplexity-impl.so

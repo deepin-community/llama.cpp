@@ -1,5 +1,405 @@
-template-repository (1.0-1) unstable; urgency=medium
+llama.cpp (9601+dfsg-1) unstable; urgency=medium
 
-  * Initial release
+  [ Christian Kastner ]
+  * New upstream version 9601+dfsg
+    - Refresh patches
+  * Bump ggml dependency to 0.15.0
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+  [ Helge Kreutzmann ]
+  * Add po-debconf German translation (Closes: #1139707)
+
+ -- Christian Kastner <ckk@debian.org>  Thu, 11 Jun 2026 22:15:26 +0200
+
+llama.cpp (9555+dfsg-1) unstable; urgency=medium
+
+  [ Carles Pina i Estany ]
+  * Added po-debconf Catalan translation
+
+  [ Luca Boccassi ]
+  * Install and use sysusers.d/tmpfiles.d config files
+
+  [ Christian Kastner ]
+  * New upstream version 9555+dfsg
+    - Refresh patches
+  * d/rules: Drop deprecated, renamed options
+  * Bump ggml dependency to 0.14.0
+
+ -- Christian Kastner <ckk@debian.org>  Mon, 08 Jun 2026 17:46:27 +0200
+
+llama.cpp (9413+dfsg-1) unstable; urgency=medium
+
+  [ Christian Kastner ]
+  * New upstream version 9413+dfsg
+    - Update WebUI patch for improved upstream solution
+    - Add cmake-Install-impls-to-private-directories.patch
+    - Refresh patches
+    - Rename one patch
+    - Drop examples no longer shipped by upstream
+      + llama-save-load-state
+  * Disable 'llama' app build for now
+    - Until we've figured out how we want to ship it
+  * Change install source path of convert_hf_to_gguf.py
+  * Bump ggml dependency to 0.13.1
+  * debian/NEWS:
+    - Fix NEWS entry text for 9190+dfsg-1
+    - Fix NEWS entry version 9091 -> 9190
+    - Reformat NEWS as per the DevRef
+  * d/control: Fix spelling of metapackage
+  * autopkgtest:
+    - Drop stray output line
+    - Skip new tests needing models
+    - Reactivate some skipped tests
+    - Temporarily skip failing test-quant-type-selection. (Closes: #1138196)
+
+  [ Petter Reinholdtsen ]
+  * Fix stream handling in SimpleChat web UI (Closes: #1138159)
+
+  [ Américo Monteiro ]
+  * Add debconf translations for PT (Closes: #1138492)
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 31 May 2026 13:33:18 +0200
+
+llama.cpp (9190+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 9190+dfsg
+    - Refresh patches
+    - Update UI management patches to support downloaded UI
+  * Deactivate build-time build/download of the WebUI
+  * Convert UI management from alternatives to debconf
+  * Reduce legacy theme support to just SimpleChat
+  * Add d/NEWS for UI management switch
+  * Fix comments in lintian-overrides, calling ggml not-yet-stable
+  * Drop README.Source, no longer needed
+  * d/copyright: Drop obsolete paths from Files-Excluded
+
+ -- Christian Kastner <ckk@debian.org>  Tue, 26 May 2026 16:35:09 +0200
+
+llama.cpp (9071+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 9071+dfsg
+    - Refresh patches
+  * Bump ggml dependency to 0.11.0
+
+ -- Christian Kastner <ckk@debian.org>  Fri, 08 May 2026 12:29:16 +0200
+
+llama.cpp (9009+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 9009+dfsg
+    - Refresh patches
+  * Properly disable Salsa CI on non-official branches
+
+ -- Christian Kastner <ckk@debian.org>  Sat, 02 May 2026 22:51:43 +0200
+
+llama.cpp (8941+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 8941+dfsg
+    - Refresh patches
+  * libllama-dev needs libggml >= 0.10.0
+  * d/copyright: Correct pattern for d/legacy-themes
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 26 Apr 2026 23:45:18 +0200
+
+llama.cpp (8870+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 8870+dfsg
+    - Refresh patches
+  * Bump ggml dependency to 0.10.0
+  * Update private library patch for new libllama-common
+  * Re-introduce server themes dropped by upstream
+    We need at least one DFSG-free version
+  * Don't hardcode URL in server "simplechat" web UI
+    Thanks to Petter Reinholdtsen for the fix. (Closes: #1128381)
+
+ -- Christian Kastner <ckk@debian.org>  Wed, 22 Apr 2026 21:39:06 +0200
+
+llama.cpp (8681+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 8681+dfsg
+    - Refresh patches
+  * Bump Standards-Version to 4.7.4 (no changes needed)
+
+ -- Christian Kastner <ckk@debian.org>  Tue, 07 Apr 2026 18:34:28 +0200
+
+llama.cpp (8611+dfsg-1) unstable; urgency=medium
+
+  [ Talha Can Havadar ]
+  * d/t/control: add missing dpkg-dev dependency for upstream-basic
+  * d/t/upstream-basic: add test-arg-parser to skip_tests
+  * d/t/upstream-basic: skip test-chat-auto-parse as it requires templates
+  * d/t/upstream-basic: skip test-llama-archs as known to be broken
+
+  [ Christian Kastner ]
+  * New upstream version 8611+dfsg
+    - Refresh patches
+  * Bump libggml0 Build-Depends to 0.9.10
+  * d/copyright: Exclude more bundled/miminimized JavaScript
+  * Refresh copyrights
+
+ -- Christian Kastner <ckk@debian.org>  Wed, 01 Apr 2026 18:20:14 +0200
+
+llama.cpp (8461+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 8461+dfsg
+  * Refresh patches
+  * Bump ggml Build-Depends to 0.9.8
+  * Ship newly appeared tools
+    - llama-debug-template-parser
+    - llama-results
+    - llama-template-analysis
+  * Use relative paths in *.install
+  * Drop Rules-Requires-Root: no, default since trixie
+
+ -- Christian Kastner <ckk@debian.org>  Sat, 21 Mar 2026 09:35:28 +0100
+
+llama.cpp (8064+dfsg-2) unstable; urgency=medium
+
+  * Introduce llama-server systemd unit file (disabled by default)
+
+ -- Mathieu Baudier <mbaudier@argeo.org>  Thu, 12 Mar 2026 16:40:55 +0100
+
+llama.cpp (8064+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 8064+dfsg
+  * autopkgtest: CUDA no longer supported on ppc64el
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 15 Feb 2026 22:11:57 +0100
+
+llama.cpp (7965+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 7965+dfsg
+    - Added examples: llama-debug
+    - Removed examples: llama-logits
+    - Removed tools (extra): llama-run
+  * Drop patch included upstream
+  * Refresh patches
+  * Bump libggml-dev dependency to 0.9.6
+  * Replace libcurl4-openssl-dev with libssl-dev
+  * d/copyright: Drop references to no longer embedded libs
+  * Install additional man pages
+  * Refresh copyrights
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 08 Feb 2026 10:18:39 +0100
+
+llama.cpp (7593+dfsg-3) unstable; urgency=medium
+
+  * autopkgtest: Fix detection of skipped tests
+  * Also make llama-bench(1) reproducible (Closes: #1113813)
+  * autopkgtest: Temporarily disable models >4GB
+    Not all workers support these models, and the test runner needs to be
+    adapted to discover this at runtime
+  * autopkgtest: Export JSON tests results as artifacts
+
+ -- Christian Kastner <ckk@debian.org>  Fri, 16 Jan 2026 18:30:50 +0100
+
+llama.cpp (7593+dfsg-2) unstable; urgency=medium
+
+  * Re-add accidentally dropped dependency on libggml-dev
+  * Designate bin:llama.cpp as Multi-Arch: foreign
+  * Bump Standards-Version to 4.7.3
+    - Drop Priority: optional, it's the dpkg default since trixie
+  * Update patch metadata
+  * Enable Salsa CI
+  * Tweak lintian overrides
+  * autopkgtest: Also run upstream's basic (non-LLM) tests
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 11 Jan 2026 16:26:14 +0100
+
+llama.cpp (7593+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 7593+dfsg
+  * Refresh patches
+  * Switch build to the now public libggml
+  * Also install libmtmd to private directory
+  * Install newly appeared tools
+  * Drop obsolete lintian overrides for ggml
+  * Refresh copyright
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 04 Jan 2026 13:37:14 +0100
+
+llama.cpp (6641+dfsg-3) unstable; urgency=medium
+
+  * autopkgtest: Add Classes to enable filtering by custom tools
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 28 Dec 2025 16:05:04 +0100
+
+llama.cpp (6641+dfsg-2) unstable; urgency=medium
+
+  [ Chris Lamb ]
+  * Add reproducible-builds.patch (Closes: #1113813)
+
+  [ Christian Kastner ]
+  * autopkgtest: Explicitly limit architectures for GPU tests
+  * autopkgtest: Use Q4_K_M quants, as per mbaudier's suggestion
+  * Replace libggml0-backend-cpu dependencies with libggml0
+  * autopkgtest: backend-vulkan-nvidia is also skip-not-installable
+
+ -- Christian Kastner <ckk@debian.org>  Tue, 23 Dec 2025 21:24:32 +0100
+
+llama.cpp (6641+dfsg-1) unstable; urgency=medium
+
+  [ Christian Kastner ]
+  * New upstream version 6641+dfsg
+    - Refresh patches
+  * Depend on versioned ggml
+    Upstream is experimenting with semantic versioning of ggml, so we can
+    switch our dependencies to that format.
+    However, because this is still experimental, we continue do depend on a
+    very specific version. This will be relaxed as soon as we have symbols
+    tracking.
+  * autopkgtests: Support blank lines/comments in d/t/supported-models.*
+  * autopkgtests: Improve upon supported test models list
+  * Update installed examples
+    - Added: llama-diffusion-cli, llama-logits
+    - Dropped: llama-gritlm
+  * d/clean: Also remove generated completions/
+
+  [ Kentaro Hayashi ]
+  * Use d/watch 5.
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 05 Oct 2025 22:09:48 +0200
+
+llama.cpp (5882+dfsg-4) unstable; urgency=medium
+
+  * Add autopkgtests.
+    - The tests expect a /models directory in the testbed
+    - This includes a test helper for running tests on AMD and NVIDIA
+      GPUs, if the system has one available.
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 14 Sep 2025 23:13:11 +0200
+
+llama.cpp (5882+dfsg-3) unstable; urgency=medium
+
+  * Upload to unstable
+  * Package description fixes
+
+ -- Christian Kastner <ckk@debian.org>  Wed, 27 Aug 2025 07:01:15 +0200
+
+llama.cpp (5882+dfsg-3~exp3) experimental; urgency=medium
+
+  [ Christian Kastner ]
+  * Switch over to SOVERsioned, dynamic-backend-loading ggml
+  * libllama0: Drop spurious python3 dependency
+
+  [ Mathieu Baudier ]
+  * llama.cpp-tools: Introduce bash completion
+
+ -- Christian Kastner <ckk@debian.org>  Thu, 07 Aug 2025 12:43:22 +0200
+
+llama.cpp (5882+dfsg-3~exp2) experimental; urgency=medium
+
+  * Correct the Section field of a few packages
+
+ -- Christian Kastner <ckk@debian.org>  Mon, 14 Jul 2025 18:54:14 +0200
+
+llama.cpp (5882+dfsg-3~exp1) experimental; urgency=medium
+
+  * Split llama.cpp package into subpackages
+  * Build new package python3-gguf
+
+  * d/rules: Pass in LLAMA_BUILD_{NUMBER,COMMIT}
+  * Add gguf-py-depends-on-the-requests-library.patch
+  * Add Add-soversion-to-libraries.patch
+  * Rename private directories llama.cpp -> llama
+  * Improve llama-server theme handling
+  * Generate manpages using help2man
+
+ -- Christian Kastner <ckk@debian.org>  Mon, 14 Jul 2025 17:17:43 +0200
+
+llama.cpp (5882+dfsg-2) unstable; urgency=medium
+
+  * Build-Depend on the exact version of ggml.
+    For the same reason the binaries depend on the exact version. Avoids
+    FTBFS because of frequent API/ABI breakages
+
+ -- Christian Kastner <ckk@debian.org>  Sun, 13 Jul 2025 11:16:13 +0200
+
+llama.cpp (5882+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 5882+dfsg
+  * Rebase patches
+  * Fix broken path to llama-server theme
+  * Bump ggml dependency
+  * d/gbp.conf: Convert to DEP-14 layout
+  * d/gbp.conf: Enforce non-numbered patches
+  * Update d/copyright
+
+ -- Christian Kastner <ckk@debian.org>  Sat, 12 Jul 2025 17:31:41 +0200
+
+llama.cpp (5760+dfsg-4) unstable; urgency=medium
+
+  * Fix installability yet again (ggml version still mis-specified)
+    (Closes: #1108925)
+
+ -- Christian Kastner <ckk@debian.org>  Tue, 08 Jul 2025 08:44:50 +0200
+
+llama.cpp (5760+dfsg-3) unstable; urgency=medium
+
+  * Fix installability (ggml version was mis-specified)
+  * Improve lintian overrides
+
+ -- Christian Kastner <ckk@debian.org>  Mon, 07 Jul 2025 18:27:22 +0200
+
+llama.cpp (5760+dfsg-2) unstable; urgency=medium
+
+  * Hard-code (relaxed) ggml dependency
+    We can't deduce the support ggml version, the maintainers must explicitly
+    specify it. In doing so, ignore the Debian revision number
+
+ -- Christian Kastner <ckk@debian.org>  Fri, 27 Jun 2025 22:13:39 +0200
+
+llama.cpp (5760+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 5760+dfsg (Closes: #1108368)
+    - Includes a fix for CVE-2025-52566
+  * Refactor/add missing copyrights for vendored code
+  * Refresh patches
+
+ -- Christian Kastner <ckk@debian.org>  Fri, 27 Jun 2025 07:55:00 +0200
+
+llama.cpp (5713+dfsg-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #1108113)
+    - Includes a fix for CVE-2025-49847
+  * Refresh patches
+  * Update d/copyright
+  * Document ggml/llama.cpp/whisper.cpp update procedure
+  * Install the new mtmd headers
+
+ -- Christian Kastner <ckk@debian.org>  Fri, 20 Jun 2025 21:00:33 +0200
+
+llama.cpp (5318+dfsg-2) unstable; urgency=medium
+
+  [ Mathieu Baudier ]
+  * Install public headers and build configurations to private directories
+  * Fix private directories for pkg-config
+
+  [ Christian Kastner ]
+  * Depend on exact build-time ggml version
+    Upstream ships llama.cpp with a specific version of ggml. We have no
+    guarantees that any version earlier or later than that, in fact it's
+    common for newer versions to break something.
+    So going forward, we ship llama.cpp and ggml in tandem, with ggml being
+    updated first, and llama.cpp depending on the exact version used at
+    build-time.
+  * Install all free server themes
+  * Enable changing server theme using update-alternatives
+  * Simplify server frontend patches
+  * Begin shipping the tests
+
+ -- Christian Kastner <ckk@debian.org>  Thu, 19 Jun 2025 23:17:31 +0200
+
+llama.cpp (5318+dfsg-1) unstable; urgency=medium
+
+  * Upload to unstable.
+
+  * New upstream version 5318+dfsg
+    - Refresh patches
+  * Update d/copyright
+
+ -- Christian Kastner <ckk@debian.org>  Fri, 09 May 2025 09:54:32 +0200
+
+llama.cpp (5151+dfsg-1~exp3) experimental; urgency=medium
+
+  * Initial release (Closes: #1063673)
+
+ -- Christian Kastner <ckk@debian.org>  Sat, 19 Apr 2025 21:59:05 +0200
