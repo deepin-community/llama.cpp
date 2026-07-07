@@ -1,0 +1,116 @@
+# Translation of llama.cpp debconf templates to Dutch.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the llama.cpp package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Frans Spiesschaert <Frans.Spiesschaert@yucom.be>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: llama.cpp_9413+dfsg-1\n"
+"Report-Msgid-Bugs-To: llama.cpp@packages.debian.org\n"
+"POT-Creation-Date: 2026-06-23 19:03+0000\n"
+"PO-Revision-Date: 2026-06-05 16:04+0200\n"
+"Last-Translator: Frans Spiesschaert <Frans.Spiesschaert@yucom.be>\n"
+"Language-Team: Debian Dutch l10n Team <debian-l10n-dutch@lists.debian.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "\"SimpleChat\" UI"
+msgstr "\"SimpleChat\" gebruikersinterface"
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "Download UI from upstream"
+msgstr "Gebruikersinterface bij de oorspronkelijke ontwikkelaar ophalen"
+
+#. Type: select
+#. Choices
+#: ../llama.cpp-tools.templates:1001
+msgid "None"
+msgstr "Geen"
+
+#. Type: select
+#. Choices
+#. Type: string
+#. Description
+#: ../llama.cpp-tools.templates:1001 ../llama.cpp-tools.templates:2001
+msgid "Custom path"
+msgstr "Aangepast pad"
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid "Which default UI would you like to use with llama-server?"
+msgstr "Welke standaardgebruikersinterface wilt u gebruiken met llama-server?"
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"This option sets the default UI for the llama-server to use. You can always "
+"override this at runtime by passing the --path option to llama-server."
+msgstr ""
+"Met deze optie wordt de standaardgebruikersinterface voor de llama-server "
+"ingesteld. U kunt dit tijdens de programmauitvoering altijd overschrijven "
+"door de optie --path aan llama-server door te geven."
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"This package comes with the minimal \"SimpleChat\" UI, which is no longer "
+"being actively developed. The package maintainers suggest that instead, you "
+"choose to download the UI from upstream, which Debian cannot ship (yet) "
+"because of missing dependencies. If you choose to download the UI, you will "
+"need an active internet connection that can reach the huggingface.co servers."
+msgstr ""
+"Dit pakket bevat de minimale gebruikersinterface \"SimpleChat\", die niet "
+"langer actief wordt ontwikkeld. De beheerders van het pakket raden aan om in "
+"plaats daarvan de gebruikersinterface rechtstreeks van de oorspronkelijke "
+"ontwikkelaar te downloaden, aangezien Debian deze (nog) niet kan leveren "
+"vanwege ontbrekende vereisten. Als u ervoor kiest om de gebruikersinterface "
+"te downloaden, hebt u een actieve internetverbinding nodig waarmee u de "
+"servers van huggingface.co kunt bereiken."
+
+#. Type: select
+#. Description
+#: ../llama.cpp-tools.templates:1002
+msgid ""
+"If you elect to supply a custom path to an UI, you will be asked to enter it "
+"on the next screen."
+msgstr ""
+"Als u ervoor kiest een aangepast pad naar een gebruikersinterface op te "
+"geven, wordt u gevraagd dit op het volgende scherm in te voeren."
+
+#. Type: string
+#. Description
+#: ../llama.cpp-tools.templates:2001
+msgid "Enter a custom path to an UI:"
+msgstr "Voer een aangepast pad naar een gebruikersinterface in:"
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "Invalid directory"
+msgstr "Ongeldige map"
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "The path you entered does not exist, or does not point to a directory."
+msgstr ""
+"Het pad dat u hebt ingevoerd bestaat niet of verwijst niet naar een map."
+
+#. Type: error
+#. Description
+#: ../llama.cpp-tools.templates:3001
+msgid "Please return to the previous screen and fix this."
+msgstr "Ga terug naar het vorige scherm en corrigeer dit."

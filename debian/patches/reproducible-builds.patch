@@ -1,0 +1,40 @@
+From: Chris Lamb <lamby@debian.org>
+Date: Sun, 4 Jan 2026 13:02:14 +0100
+Subject: Make the build reproducible
+
+We don't forward this, because the build is actually reproducible. It's the
+man page generated from the runtime help that causes the problems.
+
+Forwarded: not-needed
+Last-Update: 2026-01-15
+---
+ common/arg.cpp                    | 2 +-
+ tools/llama-bench/llama-bench.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/common/arg.cpp b/common/arg.cpp
+index bd4b113..8630ef6 100644
+--- a/common/arg.cpp
++++ b/common/arg.cpp
+@@ -1108,7 +1108,7 @@ common_params_context common_params_parser_init(common_params & params, llama_ex
+     ).set_examples({LLAMA_EXAMPLE_COMPLETION, LLAMA_EXAMPLE_CLI, LLAMA_EXAMPLE_SPECULATIVE, LLAMA_EXAMPLE_LOOKUP}));
+     add_opt(common_arg(
+         {"-t", "--threads"}, "N",
+-        string_format("number of CPU threads to use during generation (default: %d)", params.cpuparams.n_threads),
++        string_format("number of CPU threads to use during generation (default: <num_cpus>)"),
+         [](common_params & params, int value) {
+             params.cpuparams.n_threads = value;
+             if (params.cpuparams.n_threads <= 0) {
+diff --git a/tools/llama-bench/llama-bench.cpp b/tools/llama-bench/llama-bench.cpp
+index 55970c0..767f5ba 100644
+--- a/tools/llama-bench/llama-bench.cpp
++++ b/tools/llama-bench/llama-bench.cpp
+@@ -449,7 +449,7 @@ static void print_usage(int /* argc */, char ** argv) {
+     printf("  -ub, --ubatch-size <n>                      (default: %s)\n", join(cmd_params_defaults.n_ubatch, ",").c_str());
+     printf("  -ctk, --cache-type-k <t>                    (default: %s)\n", join(transform_to_str(cmd_params_defaults.type_k, ggml_type_name), ",").c_str());
+     printf("  -ctv, --cache-type-v <t>                    (default: %s)\n", join(transform_to_str(cmd_params_defaults.type_v, ggml_type_name), ",").c_str());
+-    printf("  -t, --threads <n>                           (default: %s)\n", join(cmd_params_defaults.n_threads, ",").c_str());
++    printf("  -t, --threads <n>                           (default: <num_cpus>)\n");
+     printf("  -C, --cpu-mask <hex,hex>                    (default: %s)\n", join(cmd_params_defaults.cpu_mask, ",").c_str());
+     printf("  --cpu-strict <0|1>                          (default: %s)\n", join(cmd_params_defaults.cpu_strict, ",").c_str());
+     printf("  --poll <0...100>                            (default: %s)\n", join(cmd_params_defaults.poll, ",").c_str());

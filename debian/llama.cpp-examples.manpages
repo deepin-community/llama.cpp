@@ -1,0 +1,25 @@
+man/man1/llama-batched.1
+man/man1/llama-debug.1
+man/man1/llama-diffusion-cli.1
+man/man1/llama-embedding.1
+man/man1/llama-eval-callback.1
+man/man1/llama-finetune.1
+# help2man/man1 doesn't work because this doesn't have --help yet
+#/man/man1/llama-gen-docs.1
+man/man1/llama-gguf.1
+man/man1/llama-gguf-hash.1
+man/man1/llama-idle.1
+man/man1/llama-lookahead.1
+man/man1/llama-lookup.1
+man/man1/llama-lookup-create.1
+man/man1/llama-lookup-merge.1
+man/man1/llama-lookup-stats.1
+man/man1/llama-parallel.1
+man/man1/llama-passkey.1
+man/man1/llama-retrieval.1
+man/man1/llama-simple.1
+man/man1/llama-simple-chat.1
+man/man1/llama-speculative.1
+man/man1/llama-speculative-simple.1
+# Not available with GGML_BACKEND_DL=ON
+#man/man1/llama-convert-llama2c-to-ggml.1

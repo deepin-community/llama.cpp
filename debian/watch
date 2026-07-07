@@ -1,0 +1,10 @@
+Version: 5
+
+# Note that because upstream releases so frequently, tags drop off the top-20
+# quickly. We could use the API but even its top-100 are insufficient to
+# re-download recent versions.
+Source: https://github.com/ggml-org/llama.cpp
+Mode: git
+Matching-Pattern: refs/tags/b@ANY_VERSION@
+Dversionmangle: auto
+Repacksuffix: +dfsg

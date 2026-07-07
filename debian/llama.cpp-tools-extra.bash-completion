@@ -1,0 +1,8 @@
+completions/llama-batched-bench
+completions/llama-gguf-split
+completions/llama-imatrix
+completions/llama-mtmd-cli
+completions/llama-perplexity
+completions/llama-run
+completions/llama-tokenize
+completions/llama-tts

@@ -1,0 +1,36 @@
+Tests: upstream-basic
+Depends: dpkg-dev, llama.cpp-tests
+Restrictions: allow-stderr
+
+Test-Command: debian/tests/llama.cpp-tools
+Features: test-name=backend-cpu
+Depends: llama.cpp-tools
+Restrictions: skippable, allow-stderr
+
+Test-Command: debian/tests/gpuisol-test-launcher amd debian/tests/llama.cpp-tools
+Features: test-name=backend-hip
+Depends: llama.cpp-tools, libggml0-backend-hip
+Classes: amd-gpu
+Architecture: amd64 arm64
+Restrictions: skippable, allow-stderr
+
+Test-Command: debian/tests/gpuisol-test-launcher amd debian/tests/llama.cpp-tools
+Features: test-name=backend-vulkan-amd
+Architecture: amd64 arm64
+Classes: amd-gpu
+Depends: llama.cpp-tools, libggml0-backend-vulkan, mesa-vulkan-drivers
+Restrictions: skippable, allow-stderr
+
+Test-Command: debian/tests/gpuisol-test-launcher nvidia debian/tests/llama.cpp-tools
+Features: test-name=backend-cuda
+Architecture: amd64 arm64
+Classes: nvidia-gpu
+Depends: llama.cpp-tools, libggml0-backend-cuda
+Restrictions: skippable, allow-stderr, skip-not-installable
+
+Test-Command: debian/tests/gpuisol-test-launcher nvidia debian/tests/llama.cpp-tools
+Features: test-name=backend-vulkan-nvidia
+Architecture: amd64 arm64
+Classes: nvidia-gpu
+Depends: llama.cpp-tools, libggml0-backend-vulkan, nvidia-vulkan-icd
+Restrictions: skippable, allow-stderr, skip-not-installable

@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "purge" ]; then
+    rm -rf /var/lib/llama.cpp/llama-server
+    if [ -d /var/lib/llama.cpp ]; then
+        # Only remove main dir if nothing else is using it
+        rmdir --ignore-fail-on-non-empty /var/lib/llama.cpp
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0

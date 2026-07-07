@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "remove" ]; then
+    rm -f /usr/share/llama.cpp/llama-server/default-ui
+fi
+
+#DEBHELPER#
+
+exit 0

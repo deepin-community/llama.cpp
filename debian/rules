@@ -1,4 +1,100 @@
 #!/usr/bin/make -f
+#export DH_VERBOSE = 1
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+export PYBUILD_NAME=gguf
+export PYBUILD_DIR=gguf-py
+
+# FOR DEB_VERSION_UPSTREAM
+include /usr/share/dpkg/pkg-info.mk
+
+# llama.cpp's libs are still private, hence the RPATH
+CMAKE_FLAGS = -DCMAKE_INSTALL_RPATH=/usr/lib/$(DEB_HOST_MULTIARCH)/llama \
+              -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
+	      -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+	      -DLLAMA_BUILD_NUMBER=$(subst +dfsg,,$(DEB_VERSION_UPSTREAM)) \
+	      -DLLAMA_BUILD_COMMIT=Debian \
+	      -DLLAMA_BUILD_UI=OFF \
+	      -DLLAMA_USE_PREBUILT_UI=OFF \
+	      -DLLAMA_USE_SYSTEM_GGML=ON \
+	      -DLLAMA_BUILD_APP=OFF
 
 %:
-	dh $@
+	dh $@ --buildsystem=cmake
+
+override_dh_auto_configure-arch:
+	dh_auto_configure -- $(CMAKE_FLAGS)
+
+override_dh_auto_configure-indep:
+	dh_auto_configure --buildsystem=pybuild
+
+execute_after_dh_auto_build-arch:
+	# We skip some progs because they don't have a --help option
+	mkdir -p man/man1
+	for progname in obj-*/bin/llama-*; do \
+		progname_base=$$(basename $$progname); \
+		[ "$$progname_base" != "llama-gen-docs" ] || continue ; \
+		[ "$$progname_base" != "llama-debug-options-parser" ] || continue ; \
+		[ "$$progname_base" != "llama-template-analysis" ] || continue ; \
+		help2man \
+			--source=debian \
+			--version-string=$(DEB_VERSION_UPSTREAM) \
+			--name=$$progname_base \
+			--section=1 \
+			--no-info \
+			--no-discard-stderr \
+			$$progname > man/man1/$$progname_base.1; \
+	done
+	
+execute_after_dh_auto_install-arch:
+	# Bash completion file
+	mkdir -p completions
+	LD_LIBRARY_PATH=debian/tmp/usr/lib/${DEB_HOST_MULTIARCH}/llama \
+		debian/tmp/usr/bin/llama-cli --device none --completion-bash \
+		> completions/llama-cli
+
+	for progname in debian/tmp/usr/bin/llama-*; do \
+		progname_base=$$(basename $$progname); \
+		[ "$$progname_base" != "llama-cli" ] || continue ; \
+		ln -r -s completions/llama-cli completions/$$progname_base; \
+	done
+
+override_dh_auto_build-indep:
+	dh_auto_build --buildsystem=pybuild
+
+# No tests for now, as many need some kind of model we don't have
+override_dh_auto_test:
+	:
+
+override_dh_auto_install-indep:
+	dh_auto_install --buildsystem=pybuild
+	mkdir -p man/man1
+	for progname in debian/python3-gguf/usr/bin/gguf-*; do \
+		progname_base=$$(basename $$progname); \
+		[ "$$progname_base" != "gguf-editor-gui" ] || continue ; \
+		PYTHONPATH=gguf-py help2man \
+			--source=debian \
+			--version-string=$(DEB_VERSION_UPSTREAM) \
+			--name=$$progname_base \
+			--section=1 \
+			--no-info \
+			--no-discard-stderr \
+			$$progname > man/man1/$$progname_base.1; \
+	done
+	
+	# llama-server systemd service configuration
+	install -D -m0644 debian/llama-server.default debian/llama.cpp-tools/etc/default/llama-server
+
+override_dh_installsystemd:
+	# Do not enable llama-server.service by default
+	dh_installsystemd --no-enable --no-start --name llama-server
+
+override_dh_auto_clean-indep:
+	dh_auto_clean --buildsystem=pybuild
+
+execute_after_dh_auto_clean:
+	rm -f common/build-info.cpp
+
+override_dh_compress:
+	dh_compress -X.py

@@ -1,0 +1,23 @@
+# Run llama-server --help for the list of usable environment variables
+# to be set in this file
+
+# For example, to override some of the defaults:
+
+# Listen on all network interfaces
+#LLAMA_ARG_HOST=0.0.0.0
+
+# Download and use a single LLM (from HuggingFace.com)
+#LLAMA_ARG_HF_REPO=allenai/OLMo-2-0425-1B-Instruct-GGUF
+
+# Limit the context size of each session
+#LLAMA_ARG_CTX_SIZE=10240
+
+# Set an API key restricting access
+#LLAMA_API_KEY=
+
+# Additionally, deployment defaults can also be overridden here
+#SERVER_HOME=/var/lib/llama-server
+#SERVER_CACHE=/var/cache/llama-server
+#SERVER_NAME="llama.cpp server"
+#SERVER_USER=_llama-server
+#SERVER_GROUP=_llama-server

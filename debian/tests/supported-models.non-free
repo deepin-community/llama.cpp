@@ -1,0 +1,17 @@
+# Directory/file layout follows Hugging Face's layout:
+# org/model/quantization
+
+# ckk 2026-01-16: Models > 4GB temporarily disabled, see #1125448
+
+# ggml-org's quantiziation of OpenAI's Apache 2.0-licensed gpt-oss-20b
+#ggml-org/gpt-oss-20b-GGUF/gpt-oss-20b-mxfp4.gguf
+
+# OLMo 2 models are Apache 2.0-licensed
+allenai/OLMo-2-0425-1B-Instruct-GGUF/OLMo-2-0425-1B-Instruct-Q4_K_M.gguf
+allenai/OLMo-2-0425-1B-Instruct-GGUF/OLMo-2-0425-1B-Instruct-Q8_0.gguf
+allenai/OLMo-2-0425-1B-Instruct-GGUF/OLMo-2-0425-1B-Instruct-F16.gguf
+
+# IBM's Granite models are Apache 2.0-licensed
+ibm-granite/granite-3.3-2b-instruct-GGUF/granite-3.3-2b-instruct-Q4_K_M.gguf
+ibm-granite/granite-3.3-2b-instruct-GGUF/granite-3.3-2b-instruct-Q8_0.gguf
+#ibm-granite/granite-3.3-2b-instruct-GGUF/granite-3.3-2b-instruct-f16.gguf

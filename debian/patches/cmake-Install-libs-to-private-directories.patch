@@ -1,0 +1,100 @@
+From: Mathieu Baudier <mbaudier@argeo.org>
+Date: Wed, 11 Jun 2025 18:30:05 +0200
+Subject: cmake-Install-to-private-directories
+
+Install libraries and public headers to a private directory as they are
+not yet stable.
+
+Forwarded: not-needed
+---
+ CMakeLists.txt            | 29 ++++++++++++++++++++---------
+ cmake/llama.pc.in         |  4 ++--
+ tools/mtmd/CMakeLists.txt |  5 ++++-
+ 3 files changed, 26 insertions(+), 12 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9e7b125..a725517 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -189,6 +189,16 @@ if (NOT TARGET ggml AND NOT LLAMA_USE_SYSTEM_GGML)
+     # ... otherwise assume ggml is added by a parent CMakeLists.txt
+ endif()
+ 
++#
++# Define destinations
++#
++include(GNUInstallDirs)
++include(CMakePackageConfigHelpers)
++
++set(LLAMA_INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/llama CACHE PATH "Location of header  files")
++set(LLAMA_LIB_INSTALL_DIR     ${CMAKE_INSTALL_LIBDIR}/llama     CACHE PATH "Location of library files")
++set(LLAMA_BIN_INSTALL_DIR     ${CMAKE_INSTALL_BINDIR}     CACHE PATH "Location of binary  files")
++
+ #
+ # build the library
+ #
+@@ -226,13 +236,6 @@ endif()
+ # install
+ #
+ 
+-include(GNUInstallDirs)
+-include(CMakePackageConfigHelpers)
+-
+-set(LLAMA_INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR} CACHE PATH "Location of header  files")
+-set(LLAMA_LIB_INSTALL_DIR     ${CMAKE_INSTALL_LIBDIR}     CACHE PATH "Location of library files")
+-set(LLAMA_BIN_INSTALL_DIR     ${CMAKE_INSTALL_BINDIR}     CACHE PATH "Location of binary  files")
+-
+ set(LLAMA_PUBLIC_HEADERS
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/llama.h
+     ${CMAKE_CURRENT_SOURCE_DIR}/include/llama-cpp.h)
+@@ -241,10 +244,18 @@ set_target_properties(llama
+     PROPERTIES
+         PUBLIC_HEADER "${LLAMA_PUBLIC_HEADERS}")
+ 
+-install(TARGETS llama LIBRARY PUBLIC_HEADER)
++install(TARGETS llama
++    # On Debian, we install the library and headers to a private directory "llama"
++    LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR}
++    PUBLIC_HEADER DESTINATION ${LLAMA_INCLUDE_INSTALL_DIR}
++)
+ 
+ if (LLAMA_BUILD_COMMON)
+-    install(TARGETS llama-common LIBRARY)
++    install(TARGETS llama-common
++        # On Debian, we install the library and headers to a private directory "llama"
++        LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR}
++        PUBLIC_HEADER DESTINATION ${LLAMA_INCLUDE_INSTALL_DIR}
++    )
+ endif()
+ 
+ configure_package_config_file(
+diff --git a/cmake/llama.pc.in b/cmake/llama.pc.in
+index 6fb58b5..56d46c9 100644
+--- a/cmake/llama.pc.in
++++ b/cmake/llama.pc.in
+@@ -1,7 +1,7 @@
+ prefix=@CMAKE_INSTALL_PREFIX@
+ exec_prefix=@CMAKE_INSTALL_PREFIX@
+-libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+-includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
++libdir=${exec_prefix}/@LLAMA_LIB_INSTALL_DIR@
++includedir=${prefix}/@LLAMA_INCLUDE_INSTALL_DIR@
+ 
+ Name: llama
+ Description: Port of Facebook's LLaMA model in C/C++
+diff --git a/tools/mtmd/CMakeLists.txt b/tools/mtmd/CMakeLists.txt
+index 09b6235..4ede475 100644
+--- a/tools/mtmd/CMakeLists.txt
++++ b/tools/mtmd/CMakeLists.txt
+@@ -89,7 +89,10 @@ set_target_properties(mtmd
+     PROPERTIES
+     PRIVATE_HEADER debug/mtmd-debug.h)
+ 
+-install(TARGETS mtmd LIBRARY PUBLIC_HEADER)
++install(TARGETS mtmd
++    LIBRARY DESTINATION ${LLAMA_LIB_INSTALL_DIR}
++    PUBLIC_HEADER DESTINATION ${LLAMA_INCLUDE_INSTALL_DIR}
++)
+ 
+ if (NOT MSVC)
+     # for stb_image.h and miniaudio.h
