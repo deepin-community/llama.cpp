@@ -1,0 +1,1 @@
+usr/bin/test-*  usr/libexec/${DEB_HOST_MULTIARCH}/llama.cpp-tests

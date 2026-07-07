@@ -1,0 +1,8 @@
+usr/lib/${DEB_HOST_MULTIARCH}/llama/libllama.so
+usr/lib/${DEB_HOST_MULTIARCH}/llama/libllama-common.so
+usr/lib/${DEB_HOST_MULTIARCH}/llama/libmtmd.so
+
+usr/include/llama
+
+usr/lib/${DEB_HOST_MULTIARCH}/cmake/llama/* usr/lib/${DEB_HOST_MULTIARCH}/llama/cmake-private
+usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig     usr/lib/${DEB_HOST_MULTIARCH}/llama

@@ -1,0 +1,9 @@
+llama.cpp (9190+dfsg-1) unstable; urgency=medium
+
+  The earlier alternatives-based UI management has been replaced by a
+  debconf-based solution. The default UI option is SimpleChat, a legacy theme.
+  The recommended option is to download the UI from upstream. It is fully open
+  source, but we cannot it build it in Debian (yet) because of missing
+  dependencies.
+
+ -- Christian Kastner <ckk@debian.org>  Tue, 26 May 2026 16:37:02 +0200

@@ -1,0 +1,4 @@
+# libllama is not yet stable, so it is installed to a private directory
+llama.cpp-tools: custom-library-search-path RUNPATH /usr/lib/*/llama [usr/bin/*]
+# These are private libs used by utilities
+llama.cpp-tools: custom-library-search-path RUNPATH /usr/lib/*/llama [usr/lib/*]

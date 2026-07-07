@@ -1,0 +1,275 @@
+From: Christian Kastner <ckk@debian.org>
+Date: Tue, 26 May 2026 10:49:53 +0200
+Subject: Dynamically load WebUI, if available
+
+Forwarded: not-needed
+Last-Updated: 2026-06-23
+---
+ tools/server/server-http.cpp | 190 ++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 169 insertions(+), 21 deletions(-)
+
+diff --git a/tools/server/server-http.cpp b/tools/server/server-http.cpp
+index 4f2abab..c991264 100644
+--- a/tools/server/server-http.cpp
++++ b/tools/server/server-http.cpp
+@@ -5,11 +5,19 @@
+ 
+ #include <cpp-httplib/httplib.h>
+ 
++#include <algorithm>
++#include <cstdint>
++#include <cstdio>
++#include <cstdlib>
++#include <filesystem>
++#include <fstream>
+ #include <functional>
+ #include <future>
+ #include <memory>
+ #include <string>
++#include <system_error>
+ #include <thread>
++#include <vector>
+ 
+ //
+ // HTTP implementation using cpp-httplib
+@@ -74,6 +82,133 @@ struct gcp_params {
+     }
+ };
+ 
++// <Debian-specific>
++// We cannot embed upstream's pre-built UI, but users may download it at
++// install-time, and we can load it at run-time. To this end, we implement
++// *_local versions of asset-relevant functions.
++
++// Copied from tools/ui/embed.cpp
++static const char * mime_from_ext_local(const std::string & name) {
++    const auto ext = name.rfind('.');
++    if (ext == std::string::npos) return "application/octet-stream";
++    const std::string e = name.substr(ext + 1);
++    if (e == "html")        return "text/html; charset=utf-8";
++    if (e == "css")         return "text/css";
++    if (e == "js")          return "application/javascript";
++    if (e == "json")        return "application/json";
++    if (e == "webmanifest") return "application/manifest+json";
++    if (e == "svg")         return "image/svg+xml";
++    if (e == "png")         return "image/png";
++    if (e == "jpg" ||
++        e == "jpeg")        return "image/jpeg";
++    if (e == "ico")         return "image/x-icon";
++    if (e == "woff")        return "font/woff";
++    if (e == "woff2")       return "font/woff2";
++    return "application/octet-stream";
++}
++
++// Copied from tools/ui/embed.cpp and modified to return a string, as this is
++// what eventually would happen in ui.h for the embedded asset version
++static std::string fnv_hash_local(const uint8_t * data, size_t len) {
++    const uint64_t fnv_prime = 0x100000001b3ULL;
++    uint64_t hash = 0xcbf29ce484222325ULL;
++
++    for (size_t i = 0; i < len; ++i) {
++        hash ^= data[i];
++        hash *= fnv_prime;
++    }
++
++    char buf[32];
++    snprintf(buf, sizeof(buf), "\"0x%016" PRIx64 "\"", hash);
++    return buf;
++}
++
++// Indicates which UI the user configured
++static std::optional<std::filesystem::path> ui_path() {
++    static const auto result = []() -> std::optional<std::filesystem::path> {
++        std::error_code ec;
++        const std::filesystem::path default_ui_path = "/usr/share/llama.cpp/llama-server/default-ui";
++        if (std::filesystem::is_symlink(default_ui_path, ec) && !ec) {
++            return std::filesystem::read_symlink(default_ui_path, ec);
++        }
++        return std::nullopt;
++    }();
++    return result;
++}
++
++// Construct a vector of assets, loading them from the file system, to emulate
++// the embedded assets version
++static const std::vector<llama_ui_asset> & llama_ui_get_assets_local() {
++    static const auto table = []() {
++        std::vector<llama_ui_asset> result;
++        std::error_code ec;
++
++        // Do we have an UI configured?
++        if (!ui_path()) {
++            return result;
++        }
++        std::filesystem::path ui_dir = *ui_path();
++
++        // Is the UI configured a downloaded one?
++        std::string prefix = "/var/lib/llama.cpp/llama-server";
++        if (ui_dir.string().size() < prefix.size() || ui_dir.string().compare(0, prefix.size(), prefix) != 0) {
++            return result;
++        }
++
++        // embed.cpp sorts names out of necessity, we do it out of consistency
++        std::vector<std::string> names;
++        for (std::filesystem::recursive_directory_iterator it(ui_dir, ec), end; !ec && it != end; it.increment(ec)) {
++            // Need to skip the _app subdirectory
++            if (it->is_regular_file()) {
++                names.push_back(it->path().lexically_relative(ui_dir));
++            }
++        }
++        std::sort(names.begin(), names.end());
++
++        for (const std::string & name : names) {
++            std::filesystem::path asset_path = ui_dir / name;
++            std::ifstream fil(asset_path, std::ios::binary | std::ios::ate);
++            if (!fil) {
++                fprintf(stderr, "Debian llama-serve: cannot open %s\n", asset_path.c_str());
++                exit(1);
++            }
++
++            const std::streamsize siz = fil.tellg();
++            if (siz < 0) {
++                fprintf(stderr, "Debian llama-serve: cannot read size of %s\n", asset_path.c_str());
++                exit(1);
++            }
++
++            auto * buf = new uint8_t[static_cast<size_t>(siz)];
++            fil.seekg(0);
++            if (siz > 0 && !fil.read(reinterpret_cast<char *>(buf), siz)) {
++                fprintf(stderr, "Debian llama-serve: cannot read %s\n", asset_path.c_str());
++                exit(1);
++            }
++
++            llama_ui_asset a;
++            a.name = name;
++            a.data = buf;
++            a.size = static_cast<size_t>(siz);
++            a.etag = fnv_hash_local(buf, static_cast<size_t>(siz));
++            a.type = mime_from_ext_local(name);
++            result.push_back(std::move(a));
++        }
++        return result;
++    }();
++    return table;
++}
++
++static const llama_ui_asset * llama_ui_find_asset_local(const std::string & name) {
++    for (const llama_ui_asset & a : llama_ui_get_assets_local()) {
++        if (a.name == name) {
++            return &a;
++        }
++    }
++    return nullptr;
++}
++// </Debian-specific>
++
+ bool server_http_context::init(const common_params & params) {
+     const gcp_params gcp;
+ 
+@@ -182,7 +317,8 @@ bool server_http_context::init(const common_params & params) {
+             "/v1/models",
+             "/",
+         };
+-        for (const llama_ui_asset & a : llama_ui_get_assets()) {
++        // Debian-specific: assets are loaded from disk instead of embedded
++        for (const llama_ui_asset & a : llama_ui_get_assets_local()) {
+             endpoints.insert("/" + a.name);
+         }
+         return endpoints;
+@@ -237,18 +373,21 @@ bool server_http_context::init(const common_params & params) {
+ 
+     auto middleware_server_state = [this](const httplib::Request & req, httplib::Response & res) {
+         if (!is_ready.load()) {
+-#if defined(LLAMA_UI_HAS_ASSETS)
+-            if (const auto tmp = string_split<std::string>(req.path, '.');
+-                req.path == "/" || (!tmp.empty() && tmp.back() == "html")) {
+-                if (const llama_ui_asset * a = llama_ui_find_asset("loading.html")) {
+-                    res.status = 503;
+-                    res.set_content(reinterpret_cast<const char*>(a->data), a->size, "text/html; charset=utf-8");
+-                    return false;
++            // Debian-specific
++            if (llama_ui_get_assets_local().size() > 0) {
++                if (const auto tmp = string_split<std::string>(req.path, '.');
++                    req.path == "/" || (!tmp.empty() && tmp.back() == "html")) {
++                    // Debian-specific: assets are loaded from disk instead of embedded
++                    if (const llama_ui_asset * a = llama_ui_find_asset_local("loading.html")) {
++                        res.status = 503;
++                        res.set_content(reinterpret_cast<const char*>(a->data), a->size, "text/html; charset=utf-8");
++                        return false;
++                    }
+                 }
++            } else {
++                (void)req;
+             }
+-#else
+-            (void)req;
+-#endif
++
+             // no endpoints are allowed to be accessed when the server is not ready
+             // this is to prevent any data races or inconsistent states
+             res.status = 503;
+@@ -317,13 +456,14 @@ bool server_http_context::init(const common_params & params) {
+                 SRV_ERR("static assets path not found: %s\n", params.public_path.c_str());
+                 return false;
+             }
+-        } else {
+-#if defined(LLAMA_UI_HAS_ASSETS)
++        } else if (llama_ui_get_assets_local().size() > 0) { // Debian-specific
+             static auto handle_gzip_header = [](const httplib::Request & req, httplib::Response & res) {
+-                if (!llama_ui_use_gzip()) {
+-                    // no gzip build, skip
+-                    return true;
+-                }
++                // Debian-specific: In this version, we don't support gzip
++                return true;
++                //if (!llama_ui_use_gzip) {
++                //    // no gzip build, skip
++                //    return true;
++                //}
+                 if (req.get_header_value("Accept-Encoding").find("gzip") == std::string::npos) {
+                     res.status = 415; // unsupported media type
+                     res.set_content("Error: gzip is not supported by this browser", "text/plain");
+@@ -339,7 +479,8 @@ bool server_http_context::init(const common_params & params) {
+                     if (!handle_gzip_header(req, res)) {
+                         return true; // returns error message
+                     }
+-                    const llama_ui_asset * a = llama_ui_find_asset(name);
++                    // Debian-specific: assets are loaded from disk instead of embedded
++                    const llama_ui_asset * a = llama_ui_find_asset_local(name);
+                     if (!a) { res.status = 404; return false; }
+                     res.set_header("ETag", a->etag);
+                     if (const std::string & inm = req.get_header_value("If-None-Match");
+@@ -362,7 +503,8 @@ bool server_http_context::init(const common_params & params) {
+                     if (!handle_gzip_header(req, res)) {
+                         return true; // returns error message
+                     }
+-                    const llama_ui_asset * a = llama_ui_find_asset(name);
++                    // Debian-specific: assets are loaded from disk instead of embedded
++                    const llama_ui_asset * a = llama_ui_find_asset_local(name);
+                     if (!a) {
+                         res.status = 404;
+                         return false;
+@@ -387,7 +529,8 @@ bool server_http_context::init(const common_params & params) {
+                 "build.json"
+             };
+ 
+-            for (const auto & a : llama_ui_get_assets()) {
++            // Debian-specific: assets are loaded from disk instead of embedded
++            for (const auto & a : llama_ui_get_assets_local()) {
+                 if (a.name == "index.html") continue;  // served at "/" and "/index.html" above
+                 if (no_cache_names.count(a.name)) {
+                     SRV_DBG("serve nocache for %s\n", a.name.c_str());
+@@ -397,7 +540,12 @@ bool server_http_context::init(const common_params & params) {
+                 }
+             }
+ 
+-#endif
++        } else if (ui_path()) { // Debian-specific
++            std::filesystem::path ui_dir = *ui_path();
++            if (const auto is_found = srv->set_mount_point(params.api_prefix + "/", ui_dir); !is_found) {
++                SRV_ERR("static assets path not found: %s\n", ui_dir.c_str());
++                return false;
++            }
+         }
+     }
+     return true;

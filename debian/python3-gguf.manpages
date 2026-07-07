@@ -1,0 +1,6 @@
+man/man1/gguf-convert-endian.1
+man/man1/gguf-dump.1
+man/man1/gguf-new-metadata.1
+man/man1/gguf-set-metadata.1
+# Needs too many dependencies, complains about lack of display
+#man/man1/gguf-edit-gui
