@@ -1,3 +1,48 @@
+llama.cpp (9951+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 9951+dfsg
+    - Refresh patches
+  * Bump ggml dependency to 0.16.0
+
+ -- Christian Kastner <ckk@debian.org>  Fri, 10 Jul 2026 10:33:55 +0200
+
+llama.cpp (9895+dfsg-3) unstable; urgency=medium
+
+  * Replace patch for stdout reproducibiltiy.
+    The old patch only fixed a few instances, but new instances popped up,
+    owing to the race of threads exiting. I hope this does the trick.
+    - Gone: Use-simple-printf-in-usage.patch
+    - New: Flush-the-log-before-exiting.patch
+  * Fix patch metadata (the scheme was missing)
+
+ -- Christian Kastner <ckk@debian.org>  Wed, 08 Jul 2026 22:30:04 +0200
+
+llama.cpp (9895+dfsg-2) unstable; urgency=medium
+
+  * autopkgtest: Also exclude test-export-graph-ops.
+    Not a real test, it's a tool that generates inputs for other tests.
+
+ -- Christian Kastner <ckk@debian.org>  Wed, 08 Jul 2026 06:53:36 +0200
+
+llama.cpp (9895+dfsg-1) unstable; urgency=medium
+
+  * New upstream version 9895+dfsg
+    - Drop Improve-rpc-server-and-export-graph-ops-names.patch
+    - Refresh patches
+  * Remove embedded ggml
+  * Add Modify-tests-for-non-embedded-ggml-use.patch
+  * Add Use-simple-printf-in-usage.patch
+  * Add missing attributions to d/copyright
+  * Strip build prefix from executables in man pages
+  * Bump ggml dependency to 0.15.3
+  * Ship ggml-rpc-server in a private directory
+    It's available in /usr/libexec/<multi-arch>/llama/bin and needs the
+    libggml0-backend-rpc package in order to work.
+    We don't officially support this, as this binary will eventually move to
+    ggml, and we are figuring out some other things in the process.
+
+ -- Christian Kastner <ckk@debian.org>  Tue, 07 Jul 2026 14:30:04 +0200
+
 llama.cpp (9721+dfsg-1) unstable; urgency=medium
 
   [ Christian Kastner ]

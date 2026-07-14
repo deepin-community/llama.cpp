@@ -3,12 +3,13 @@ Upstream-Name: llama.cpp
 Upstream-Contact:
 Source: https://github.com/ggml-org/llama.cpp
 Files-Excluded: examples/llama.android/gradle/wrapper/gradle-wrapper.jar
+                ggml/CMakeLists.txt
+                ggml/include
+                ggml/src
                 models
 Comment:
- Embedded libraries
- ------------------
- This includes an embedded copy of ggml, but we don't use it. We use the
- system library instead.
+ We remove all of the embedded ggml except for ggml/cmake, which contains
+ functionality needed by the llama.cpp build.
  .
  DFSG compliance
  ---------------
@@ -33,28 +34,6 @@ License: Expat
 Files: common/base64.hpp
 Copyright: Placed in the public domain
 License: public-domain-1
-
-Files: ggml/src/ggml-sycl/*
-Copyright: 2024-2025, Intel Corporation
-           2025, Codeplay Software Ltd.
-License: Expat and Apache-2.0 with LLVM exception
-
-Files: ggml/src/ggml-cpu/ops.cpp
-       ggml/src/ggml-cuda/rope.cu
-       ggml/src/ggml-metal/ggml-metal.metal
-       ggml/src/ggml-opencl/kernels/rope.cl
-       ggml/src/ggml-sycl/rope.cpp
-Copyright: 2023-2024, The ggml authors
-           2023, Jeffrey Quesnelle and Bowen Peng
-License: Expat and Apache-2.0 with LLVM exception
-
-Files: ggml/src/ggml-cpu/kleidiai/*
-Copyright: 2025-2026, Arm Limited and/or its affiliates <open-source-office@arm.com>
-License: Expat
-
-Files: ggml/src/ggml-cpu/llamafile/sgemm.*
-Copyright: 2024, Mozilla Foundation
-License: Expat
 
 Files: gguf-py/*
 Copyright: 2023 Georgi Gerganov

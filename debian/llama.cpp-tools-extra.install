@@ -13,6 +13,12 @@ usr/bin/llama-tts
 #usr/bin/llama-cvector-generator
 #usr/bin/llama-export-lora
 
+# We don't install this in the public path yet, because we'd need to add a
+# dependency on libggml0-backend-rpc, which needs some more thought.
+#
+# Also, this will eventually be moved to some ggml package
+usr/bin/ggml-rpc-server usr/libexec/${DEB_HOST_MULTIARCH}/llama/bin
+
 usr/lib/*/llama/libllama-batched-bench-impl.so
 usr/lib/*/llama/libllama-fit-params-impl.so
 usr/lib/*/llama/libllama-perplexity-impl.so

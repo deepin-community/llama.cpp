@@ -9,10 +9,10 @@ Last-Updated: 2026-06-23
  1 file changed, 169 insertions(+), 21 deletions(-)
 
 diff --git a/tools/server/server-http.cpp b/tools/server/server-http.cpp
-index 4f2abab..c991264 100644
+index bb88dda..ce4bd32 100644
 --- a/tools/server/server-http.cpp
 +++ b/tools/server/server-http.cpp
-@@ -5,11 +5,19 @@
+@@ -7,11 +7,19 @@
  
  #include <cpp-httplib/httplib.h>
  
@@ -32,7 +32,7 @@ index 4f2abab..c991264 100644
  
  //
  // HTTP implementation using cpp-httplib
-@@ -74,6 +82,133 @@ struct gcp_params {
+@@ -76,6 +84,133 @@ struct gcp_params {
      }
  };
  
@@ -166,7 +166,7 @@ index 4f2abab..c991264 100644
  bool server_http_context::init(const common_params & params) {
      const gcp_params gcp;
  
-@@ -182,7 +317,8 @@ bool server_http_context::init(const common_params & params) {
+@@ -184,7 +319,8 @@ bool server_http_context::init(const common_params & params) {
              "/v1/models",
              "/",
          };
@@ -176,7 +176,7 @@ index 4f2abab..c991264 100644
              endpoints.insert("/" + a.name);
          }
          return endpoints;
-@@ -237,18 +373,21 @@ bool server_http_context::init(const common_params & params) {
+@@ -239,18 +375,21 @@ bool server_http_context::init(const common_params & params) {
  
      auto middleware_server_state = [this](const httplib::Request & req, httplib::Response & res) {
          if (!is_ready.load()) {
@@ -208,7 +208,7 @@ index 4f2abab..c991264 100644
              // no endpoints are allowed to be accessed when the server is not ready
              // this is to prevent any data races or inconsistent states
              res.status = 503;
-@@ -317,13 +456,14 @@ bool server_http_context::init(const common_params & params) {
+@@ -319,13 +458,14 @@ bool server_http_context::init(const common_params & params) {
                  SRV_ERR("static assets path not found: %s\n", params.public_path.c_str());
                  return false;
              }
@@ -229,7 +229,7 @@ index 4f2abab..c991264 100644
                  if (req.get_header_value("Accept-Encoding").find("gzip") == std::string::npos) {
                      res.status = 415; // unsupported media type
                      res.set_content("Error: gzip is not supported by this browser", "text/plain");
-@@ -339,7 +479,8 @@ bool server_http_context::init(const common_params & params) {
+@@ -341,7 +481,8 @@ bool server_http_context::init(const common_params & params) {
                      if (!handle_gzip_header(req, res)) {
                          return true; // returns error message
                      }
@@ -239,7 +239,7 @@ index 4f2abab..c991264 100644
                      if (!a) { res.status = 404; return false; }
                      res.set_header("ETag", a->etag);
                      if (const std::string & inm = req.get_header_value("If-None-Match");
-@@ -362,7 +503,8 @@ bool server_http_context::init(const common_params & params) {
+@@ -364,7 +505,8 @@ bool server_http_context::init(const common_params & params) {
                      if (!handle_gzip_header(req, res)) {
                          return true; // returns error message
                      }
@@ -249,7 +249,7 @@ index 4f2abab..c991264 100644
                      if (!a) {
                          res.status = 404;
                          return false;
-@@ -387,7 +529,8 @@ bool server_http_context::init(const common_params & params) {
+@@ -389,7 +531,8 @@ bool server_http_context::init(const common_params & params) {
                  "build.json"
              };
  
@@ -259,7 +259,7 @@ index 4f2abab..c991264 100644
                  if (a.name == "index.html") continue;  // served at "/" and "/index.html" above
                  if (no_cache_names.count(a.name)) {
                      SRV_DBG("serve nocache for %s\n", a.name.c_str());
-@@ -397,7 +540,12 @@ bool server_http_context::init(const common_params & params) {
+@@ -399,7 +542,12 @@ bool server_http_context::init(const common_params & params) {
                  }
              }
  
