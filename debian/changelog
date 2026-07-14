@@ -1,3 +1,9 @@
+llama.cpp (9721+dfsg-1deepin1) unstable; urgency=medium
+
+  * fix sysusers
+
+ -- Chang Yang <yangchang@deepin.org>  Tue, 14 Jul 2026 14:00:35 +0800
+
 llama.cpp (9721+dfsg-1) unstable; urgency=medium
 
   [ Christian Kastner ]

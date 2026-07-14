@@ -1,1 +1,1 @@
-u! _llama-server - "llama.cpp server" /var/lib/llama-server
+u _llama-server - "llama.cpp server" /var/lib/llama-server
