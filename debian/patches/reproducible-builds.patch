@@ -13,10 +13,10 @@ Last-Update: 2026-01-15
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/common/arg.cpp b/common/arg.cpp
-index bd4b113..8630ef6 100644
+index 8a78291..c5cd4ea 100644
 --- a/common/arg.cpp
 +++ b/common/arg.cpp
-@@ -1108,7 +1108,7 @@ common_params_context common_params_parser_init(common_params & params, llama_ex
+@@ -1281,7 +1281,7 @@ common_params_context common_params_parser_init(common_params & params, llama_ex
      ).set_examples({LLAMA_EXAMPLE_COMPLETION, LLAMA_EXAMPLE_CLI, LLAMA_EXAMPLE_SPECULATIVE, LLAMA_EXAMPLE_LOOKUP}));
      add_opt(common_arg(
          {"-t", "--threads"}, "N",
@@ -26,7 +26,7 @@ index bd4b113..8630ef6 100644
              params.cpuparams.n_threads = value;
              if (params.cpuparams.n_threads <= 0) {
 diff --git a/tools/llama-bench/llama-bench.cpp b/tools/llama-bench/llama-bench.cpp
-index 55970c0..767f5ba 100644
+index 0756893..0f64b71 100644
 --- a/tools/llama-bench/llama-bench.cpp
 +++ b/tools/llama-bench/llama-bench.cpp
 @@ -449,7 +449,7 @@ static void print_usage(int /* argc */, char ** argv) {
