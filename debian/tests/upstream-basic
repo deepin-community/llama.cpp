@@ -12,6 +12,7 @@ skip_tests="\
 test-autorelease
 test-chat
 test-chat-auto-parser
+test-export-graph-ops
 test-gbnf-validator
 test-model-load-cancel
 test-quant-type-selection

@@ -13,7 +13,7 @@ Build-Depends: dh-sequence-bash-completion,
                debhelper-compat (= 13),
                help2man,
                libssl-dev,
-               libggml-dev (>= 0.15.0),
+               libggml-dev (>= 0.16.0),
                pkgconf,
                po-debconf,
 Build-Depends-Indep: dh-sequence-python3,
@@ -94,7 +94,7 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends: libllama0 (= ${binary:Version}),
-         libggml-dev (>= 0.15.0),
+         libggml-dev (>= 0.16.0),
          ${misc:Depends},
 Breaks: llama.cpp (<< 5882+dfsg-3~exp1)
 Replaces: llama.cpp (<< 5882+dfsg-3~exp1)
